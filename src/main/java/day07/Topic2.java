@@ -64,11 +64,17 @@ public class Topic2 {
         }
 
     }
-    //todo 输入的字符串会报错  还没有解决
+
+    /**
+     * TODO
+     * 输入已存在订单ID要给出提示，并且能重新下单
+     * 各字段输入格式不对时，给出提示，并可重新输入
+     * 各字段多输入或者少输入，给出提示
+     * @throws SQLException
+     */
 
     public static void CreateOrder() throws SQLException {
         Connection connection = DriverManager.getConnection(URL, USER_NAME, PASSWD);
-        Statement statement = connection.createStatement();
         Scanner scanner = new Scanner(System.in);
         System.out.println("输入订单ID：");
         Integer c1 = Integer.valueOf(scanner.next());
@@ -88,20 +94,38 @@ public class Topic2 {
         System.out.println("输入商户姓名：");
         String c6 = valueOf(scanner.next());
 
-        statement.execute("insert into tb_order(order_id,order_amount,order_user_id,order_user_name,order_merchant_id,order_merchant_name) values("+c1+","+c2+","+c3+","+ c4 +","+c5+","+c6+")");
-        statement.close();
+        //statement.execute("insert into tb_order(order_id,order_amount,order_user_id,order_user_name,order_merchant_id,order_merchant_name) values("+c1+","+c2+","+c3+","+ c4 +","+c5+","+c6+")");
+        PreparedStatement preparedStatement = connection.prepareStatement("insert into tb_order(order_id,order_amount,order_user_id,order_user_name,order_merchant_id,order_merchant_name) values(?,?,?,?,?,?)");
+
+        preparedStatement.setInt(1,c1);
+        preparedStatement.setInt(2,c2 );
+        preparedStatement.setInt(3, c3);
+        preparedStatement.setString(4, c4);
+        preparedStatement.setInt(5, c5);
+        preparedStatement.setString(6, c6);
+        preparedStatement.executeUpdate();
+
+        preparedStatement.close();
         connection.close();
     }
 
     /**
-     *
+     *TODO
+     * 待完善订单ID不可修改
+     * 待完善修改其他项值
      * @throws SQLException
      */
     public static void UpdateOrder() throws SQLException {
         Connection connection = DriverManager.getConnection(URL, USER_NAME, PASSWD);
         Statement statement = connection.createStatement();
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("输入想要修改的订单ID：");
+        Integer s4 = Integer.valueOf(scanner.next());
+        Scanner scanner1 = new Scanner(System.in);
+        System.out.println("输入修改后的用户ID：");
+        Integer s5 = Integer.valueOf(scanner.next());
+        statement.executeUpdate("update tb_order set order_user_id = "+s5+" where order_id = "+ s4);
 
-        statement.executeUpdate("update tb_order set order_user_name = '小红' where order_id =1 ");
         statement.close();
         connection.close();
     }
